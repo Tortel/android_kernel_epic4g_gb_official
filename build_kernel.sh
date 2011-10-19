@@ -2,12 +2,18 @@
 
 echo "$1 $2 $3"
 
+#TOOLCHAIN=`pwd`/toolchains/android-toolchain-4.4.3/bin
+#TOOLCHAIN_PREFIX=arm-linux-androideabi-
+TOOLCHAIN=/home/scott/android-sdk-linux_x86/arm/bin
+TOOLCHAIN_PREFIX=arm-none-linux-gnueabi-
+
+
 case "$1" in
 	Clean)
 		echo "************************************************************"
 		echo "* Clean Kernel                                             *"
 		echo "************************************************************"
-		pushd Kernel
+		pushd kernel
 			make clean V=1 ARCH=arm CROSS_COMPILE=$TOOLCHAIN/$TOOLCHAIN_PREFIX 2>&1 | tee make.clean.out
 		popd
 		echo " Clean is done... "
@@ -17,7 +23,7 @@ case "$1" in
 		echo "************************************************************"
 		echo "* mrproper Kernel                                          *"
 		echo "************************************************************"
-		pushd Kernel
+		pushd kernel
 			make clean V=1 ARCH=arm CROSS_COMPILE=$TOOLCHAIN/$TOOLCHAIN_PREFIX 2>&1 | tee make.clean.out
 			make mrproper 2>&1 | tee make.mrproper.out
 		popd
@@ -28,7 +34,7 @@ case "$1" in
 		echo "************************************************************"
 		echo "* distclean Kernel                                         *"
 		echo "************************************************************"
-		pushd Kernel
+		pushd kernel
 			make clean V=1 ARCH=arm CROSS_COMPILE=$TOOLCHAIN/$TOOLCHAIN_PREFIX 2>&1 | tee make.clean.out
 			make distclean 2>&1 | tee make.distclean.out
 		popd
@@ -42,7 +48,7 @@ case "$1" in
 esac
 
 if [ "$CPU_JOB_NUM" = "" ] ; then
-	CPU_JOB_NUM=4
+	CPU_JOB_NUM=6
 fi
 
 TARGET_LOCALE="vzw"
@@ -51,12 +57,7 @@ TARGET_LOCALE="vzw"
 #export KBUILD_BUILD_VERSION="nubernel-EC05_v0.0.0"
 DEFCONFIG_STRING=victory_8G_defconfig
 
-#TOOLCHAIN=`pwd`/toolchains/android-toolchain-4.4.3/bin
-#TOOLCHAIN_PREFIX=arm-linux-androideabi-
-TOOLCHAIN=/usr/local/toolchain/arm-2009q3/bin
-TOOLCHAIN_PREFIX=arm-none-linux-gnueabi-
-
-KERNEL_BUILD_DIR=`pwd`/Kernel
+KERNEL_BUILD_DIR=`pwd`/kernel
 ANDROID_OUT_DIR=`pwd`/Android/out/target/product/SPH-D700
 
 export PRJROOT=$PWD
@@ -80,7 +81,7 @@ BUILD_MODULE()
 	echo "* BUILD_MODULE                                             *"
 	echo "************************************************************"
 	echo
-	pushd Kernel
+	pushd kernel
 		make ARCH=arm modules
 	popd
 }
@@ -90,7 +91,7 @@ CLEAN_ZIMAGE()
 	echo "************************************************************"
 	echo "* Removing old zImage                                      *"
 	echo "************************************************************"
-	rm -f `pwd`/Kernel/arch/arm/boot/zImage
+	rm -f `pwd`/kernel/arch/arm/boot/zImage
 	echo "* zImage removed"
 	echo "************************************************************"
 	echo
@@ -106,7 +107,7 @@ BUILD_KERNEL()
 		export KDIR=`pwd`
 		make ARCH=arm $DEFCONFIG_STRING
 #		make -j$CPU_JOB_NUM ARCH=arm CROSS_COMPILE=$TOOLCHAIN/$TOOLCHAIN_PREFIX
-		make V=1 -j$CPU_JOB_NUM ARCH=arm CROSS_COMPILE=$TOOLCHAIN/$TOOLCHAIN_PREFIX 2>&1 | tee make.out
+		make -j$CPU_JOB_NUM ARCH=arm CROSS_COMPILE=$TOOLCHAIN/$TOOLCHAIN_PREFIX 2>&1 | tee make.out
 	popd
 }
 
