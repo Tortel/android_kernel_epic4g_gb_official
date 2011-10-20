@@ -53,6 +53,9 @@ snd-soc-wm8993-objs := wm8993.o
 ifeq ($(CONFIG_SND_SOC_WM8994_VICTORY),y)
 snd-soc-wm8994-objs := victory/wm8994_samsung.o victory/wm8994_aries.o
 endif
+ifeq ($(CONFIG_SND_VOODOO),y)
+snd-soc-wm8994-objs := victory/wm8994_samsung.o victory/wm8994_aries.o victory/wm8994_voodoo.o
+endif
 ifeq ($(CONFIG_SND_SOC_WM8994_ATLAS),y)
 ifeq ($(CONFIG_S5PV210_GARNETT_DELTA),y)
 snd-soc-wm8994-objs := garnett/wm8994_samsung.o garnett/wm8994_aries.o
@@ -136,3 +139,7 @@ obj-$(CONFIG_SND_SOC_MAX9877)	+= snd-soc-max9877.o
 obj-$(CONFIG_SND_SOC_TPA6130A2)	+= snd-soc-tpa6130a2.o
 obj-$(CONFIG_SND_SOC_WM2000)	+= snd-soc-wm2000.o
 obj-$(CONFIG_SND_SOC_WM9090)	+= snd-soc-wm9090.o
+
+ifeq ($(CONFIG_SND_VOODOO_MODULE),m)
+obj-$(CONFIG_SND_VOODOO_MODULE)	+= voodoo-sound-tegrak-module/
+endif
