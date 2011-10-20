@@ -90,14 +90,19 @@ service ueventd /sbin/ueventd
 #service console /system/bin/sh
 #    console
 
+#custom recovery functions
+service recovery /sbin/recovery.sh
+user root
+oneshot
+
 #service recovery /sbin/recovery
-service recovery /system/bin/recovery
+#service recovery /system/bin/recovery
 
+on property:persist.service.adb.enable=1
+    start adbd
+
+on property:persist.service.adb.enable=0
+    stop adbd
+    
 service adbd /sbin/adbd recovery
-    disabled
-
-#on property:persist.service.adb.enable=1
-#    start adbd
-
-#on property:persist.service.adb.enable=0
-#    stop adbd
+#    disabled
