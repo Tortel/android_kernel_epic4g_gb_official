@@ -321,7 +321,7 @@ static struct s3cfb_lcd nt35580 = {
 	.p_width = 52,
 	.p_height = 86,
 	.bpp = 24,
-	.freq = 60,
+	.freq = 72,
 	.timing = {
 		.h_fp = 10,
 		.h_bp = 20,
@@ -1151,7 +1151,7 @@ static struct s3cfb_lcd s6e63m0 = {
 	.p_width = 52,
 	.p_height = 86,
 	.bpp = 24,
-	.freq = 60,
+	.freq = 72,
 
 	.timing = {
 		.h_fp = 16,
