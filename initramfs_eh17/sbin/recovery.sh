@@ -33,4 +33,6 @@ chown root.system /res/images/*
 mkdir /etc
 cp /res/etc/recovery.fstab /etc/recovery.fstab
 sync
-/sbin/recovery
+#/sbin/recovery
+#Call the kernel change script instead of CWM
+/sbin/change_kernel.sh
