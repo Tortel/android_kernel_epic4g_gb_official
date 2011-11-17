@@ -75,26 +75,27 @@ static unsigned int g_dvfslockval[DVFS_LOCK_TOKEN_NUM];
 const unsigned long arm_volt_max = 1350000;
 const unsigned long int_volt_max = 1250000;
 
+//Voltage table
 static struct s5pv210_dvs_conf dvs_conf[] = {
 	[L0] = {
-		.arm_volt   = 1275000,
-		.int_volt   = 1100000,
+		.arm_volt   = 1175000,  //1275000
+		.int_volt   = 1100000, //1100000
 	},
 	[L1] = {
-		.arm_volt   = 1200000,
-		.int_volt   = 1100000,
+		.arm_volt   = 1150000, //1200000
+		.int_volt   = 1100000, //1100000
 	},
 	[L2] = {
-		.arm_volt   = 1050000,
-		.int_volt   = 1100000,
+		.arm_volt   = 1000000, //1050000
+		.int_volt   = 1100000, //1100000
 	},
 	[L3] = {
-		.arm_volt   = 950000,
-		.int_volt   = 1100000,
+		.arm_volt   = 940000, //950000
+		.int_volt   = 1100000, //1100000
 	},
 	[L4] = {
-		.arm_volt   = 950000,
-		.int_volt   = 1000000,
+		.arm_volt   = 940000, //950000
+		.int_volt   = 1000000, //1000000
 	},
 };
 
