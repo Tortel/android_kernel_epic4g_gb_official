@@ -53,10 +53,10 @@ struct mtd_partition s3c_partition_info[] = {
 	           that would allow us to change the partitions before without
 	           loosing ths sensible data*/
 		/* Empty STL partition on Epic. */
-		.name		= "efs",
+/*		.name		= "efs",
 		.offset		= (2*SZ_256K),
 		.size		= (40*SZ_256K), //41
-	},
+	}, */
 	{       /* the modem firmware has to be mtd5 as the userspace samsung ril uses
 	           this device hardcoded, but I placed it at the end of the NAND to be
 	           able to change the other partition layout without moving it */
