@@ -184,7 +184,7 @@ static inline void s3c_write_cmd(int value, unsigned int cmd)
 	writel(value, onenand->ahb_addr + cmd);
 }
 
-#ifdef SAMSUNG_DEBUG
+
 static void s3c_dump_reg(void)
 {
 	int i;
@@ -196,7 +196,7 @@ static void s3c_dump_reg(void)
 			s3c_read_reg(i + 0x20), s3c_read_reg(i + 0x30));
 	}
 }
-#endif
+
 
 #ifdef CONFIG_MTD_PARTITIONS
 struct slsi_ptbl_entry {
