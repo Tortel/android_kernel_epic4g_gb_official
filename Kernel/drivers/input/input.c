@@ -41,6 +41,7 @@ MODULE_LICENSE("GPL");
 #else
 #define QKEY_U          17
 #endif
+
 /*
  * EV_ABS events which should not be cached are listed here.
  */
@@ -93,6 +94,40 @@ static int input_defuzz_abs_event(int value, int old_val, int fuzz)
 	}
 
 	return value;
+}
+
+/*
+ * Function ported from froyo, to enable Vol Up+Camera+Power reboot
+ */
+static void input_chk_hardreset(unsigned int code, int value)
+{
+  static int key1=0, key2=0, key3=0;
+
+
+  if(value)
+  {
+    if(code==KEY_VOLUMEUP)
+      key1 = 1;
+    else if(code==KEY_POWER)
+      key2 = 1;
+    else if(code==KEY_CAMERA)
+      key3 = 1;
+    
+    if(key1 && key2 && key3){
+      kernel_sec_hw_reset(true);     
+      //reboot(LINUX_REBOOT_CMD_RESTART);
+    }                
+  
+  }
+  else
+  {
+    if(code==KEY_VOLUMEUP)
+      key1 = 0;
+    else if(code==KEY_POWER)
+      key2 = 0;
+    else if(code==KEY_CAMERA)            
+      key3 = 0;
+  }
 }
 
 /*
@@ -339,12 +374,14 @@ void input_event(struct input_dev *dev,
 	#ifdef CONFIG_MACH_ATLAS
 	bool skip_once = 0 ;
 	#endif
+	input_chk_hardreset(code, value);
 	/*
 	 *  Forced upload mode key string (tkhwang)
 	 */
 #ifdef CONFIG_KERNEL_DEBUG_SEC
 	static bool first = 0, second = 0, third = 0;
 #if defined (CONFIG_KEYPAD_S3C)
+   
 	if (strcmp(dev->name,"s3c-keypad")==0 || strcmp(dev->name,"victory-keypad") == 0 || strcmp(dev->name,"forte-keypad") == 0) {
 		if (value) {
 			if (code == KERNEL_SEC_FORCED_UPLOAD_1ST_KEY)
