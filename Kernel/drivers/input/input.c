@@ -31,6 +31,10 @@
 #include <linux/kernel_sec_common.h>
 #endif
 
+#ifdef CONFIG_MACH_VICTORY
+#define USE_PSEUDO_HARD_RESET
+#endif
+
 MODULE_AUTHOR("Vojtech Pavlik <vojtech@suse.cz>");
 MODULE_DESCRIPTION("Input core");
 MODULE_LICENSE("GPL");
@@ -41,7 +45,6 @@ MODULE_LICENSE("GPL");
 #else
 #define QKEY_U          17
 #endif
-
 /*
  * EV_ABS events which should not be cached are listed here.
  */
@@ -74,6 +77,34 @@ static DEFINE_MUTEX(input_mutex);
 
 static struct input_handler *input_table[8];
 
+#ifdef USE_PSEUDO_HARD_RESET
+static void input_chk_hardreset(unsigned int code, int value)
+{
+	static int key1=0, key2=0, key3=0;
+	if(value)
+	{
+		if(code==KERNEL_SEC_HARDRESET_KEY1)
+			key1 = 1;
+		else if(code==KERNEL_SEC_HARDRESET_KEY2)
+			key2 = 1;
+		else if(code==KERNEL_SEC_HARDRESET_KEY3)
+			key3 = 1;
+		if(key1 && key2 && key3) {
+			kernel_sec_hw_reset(true);
+			//reboot(LINUX_REBOOT_CMD_RESTART);
+		}
+	}
+	else {
+		if(code==KERNEL_SEC_HARDRESET_KEY1)
+			key1 = 0;
+		else if(code==KERNEL_SEC_HARDRESET_KEY2)
+			key2 = 0;
+		else if(code==KERNEL_SEC_HARDRESET_KEY3)
+			key3 = 0;
+	}
+}
+#endif
+
 static inline int is_event_supported(unsigned int code,
 				     unsigned long *bm, unsigned int max)
 {
@@ -94,40 +125,6 @@ static int input_defuzz_abs_event(int value, int old_val, int fuzz)
 	}
 
 	return value;
-}
-
-/*
- * Function ported from froyo, to enable Vol Up+Camera+Power reboot
- */
-static void input_chk_hardreset(unsigned int code, int value)
-{
-  static int key1=0, key2=0, key3=0;
-
-
-  if(value)
-  {
-    if(code==KEY_VOLUMEUP)
-      key1 = 1;
-    else if(code==KEY_POWER)
-      key2 = 1;
-    else if(code==KEY_CAMERA)
-      key3 = 1;
-    
-    if(key1 && key2 && key3){
-      kernel_sec_hw_reset(true);     
-      //reboot(LINUX_REBOOT_CMD_RESTART);
-    }                
-  
-  }
-  else
-  {
-    if(code==KEY_VOLUMEUP)
-      key1 = 0;
-    else if(code==KEY_POWER)
-      key2 = 0;
-    else if(code==KEY_CAMERA)            
-      key3 = 0;
-  }
 }
 
 /*
@@ -374,14 +371,12 @@ void input_event(struct input_dev *dev,
 	#ifdef CONFIG_MACH_ATLAS
 	bool skip_once = 0 ;
 	#endif
-	input_chk_hardreset(code, value);
 	/*
 	 *  Forced upload mode key string (tkhwang)
 	 */
 #ifdef CONFIG_KERNEL_DEBUG_SEC
 	static bool first = 0, second = 0, third = 0;
 #if defined (CONFIG_KEYPAD_S3C)
-   
 	if (strcmp(dev->name,"s3c-keypad")==0 || strcmp(dev->name,"victory-keypad") == 0 || strcmp(dev->name,"forte-keypad") == 0) {
 		if (value) {
 			if (code == KERNEL_SEC_FORCED_UPLOAD_1ST_KEY)
@@ -453,6 +448,17 @@ void input_event(struct input_dev *dev,
 	}
 #endif //CONFIG_KEYPAD_S3C
 #endif //CONFIG_KERNEL_DEBUG_SEC
+
+#ifdef USE_PSEUDO_HARD_RESET
+	if((dev->name) != 0) {
+		if(strcmp(dev->name,"s3c-keypad")==0 ||
+			strcmp(dev->name,"victory-keypad") == 0)
+		{
+			//Checking Hard Reset Condition
+			input_chk_hardreset(code, value);
+		}
+	}
+#endif
 
 	#ifdef CONFIG_MACH_ATLAS
 	if(skip_once == 0) {
@@ -2103,3 +2109,4 @@ static void __exit input_exit(void)
 
 subsys_initcall(input_init);
 module_exit(input_exit);
+
