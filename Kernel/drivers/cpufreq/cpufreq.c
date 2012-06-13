@@ -29,16 +29,8 @@
 #include <linux/completion.h>
 #include <linux/mutex.h>
 
-#ifdef CONFIG_MACH_VICTORY
-#include <mach/cpu-freq-v210.h>
-#endif
-
 #define dprintk(msg...) cpufreq_debug_printk(CPUFREQ_DEBUG_CORE, \
 						"cpufreq-core", msg)
-
-/* Defining enabled steps in Voltage Control. */
-int enabled_freqs[NUM_FREQ] = { 0, 1, 1, 1, 1, 1, 1 };
-
 
 /**
  * The "cpufreq driver" - the arch- or hardware-dependent low
@@ -655,8 +647,8 @@ static ssize_t show_scaling_setspeed(struct cpufreq_policy *policy, char *buf)
 	return policy->governor->show_setspeed(policy, buf);
 }
 
-
- /** show_scaling_driver - show the current cpufreq HW/BIOS limitation
+/**
+ * show_scaling_driver - show the current cpufreq HW/BIOS limitation
  */
 static ssize_t show_bios_limit(struct cpufreq_policy *policy, char *buf)
 {
@@ -669,7 +661,6 @@ static ssize_t show_bios_limit(struct cpufreq_policy *policy, char *buf)
 	}
 	return sprintf(buf, "%u\n", policy->cpuinfo.max_freq);
 }
-
 
 cpufreq_freq_attr_ro_perm(cpuinfo_cur_freq, 0400);
 cpufreq_freq_attr_ro(cpuinfo_min_freq);

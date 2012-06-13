@@ -85,9 +85,8 @@ static int mfc_open(struct inode *inode, struct file *file)
 		}
 
 #ifdef CONFIG_DVFS_LIMIT
-
-		s5pv210_lock_dvfs_high_level(DVFS_LOCK_TOKEN_1, L4); //400MHz
-	#endif
+		s5pv210_lock_dvfs_high_level(DVFS_LOCK_TOKEN_1, L1);
+#endif
 		clk_enable(mfc_sclk);
 
 		mfc_load_firmware(mfc_fw_info->data, mfc_fw_info->size);
@@ -485,7 +484,7 @@ static int mfc_mmap(struct file *filp, struct vm_area_struct *vma)
 		page_frame_no, vir_size - mfc_ctx->port0_mmap_size, vma->vm_page_prot)) {
 		mfc_err("mfc remap port1 error\n");
 		return -EAGAIN;
-	}	
+	}
 
 	mfc_debug("virtual requested mem = %ld, physical reserved data mem = %ld\n", vir_size, phy_size);
 
